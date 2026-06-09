@@ -1,7 +1,7 @@
 # AudioGenerator
 The application generates an audio signal - a sine wave - and it is stored as raw PCM (Pulse Code Modulation) in a .raw file format. The .raw files can be verified by playing them on audio player like Audacity. 
 
-##Objectives:
+## Objectives:
 - Sine wave generation
 - Encode the signal to PCM data depending on the sample rate provided by the user.
 - Write PCM data to a file in raw format.
