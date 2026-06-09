@@ -6,4 +6,5 @@ The application generates an audio signal - a sine wave - and it is stored as ra
 - Encode the signal to PCM data depending on the sample rate provided by the user.
 - Write PCM data to a file in raw format.
 - Revision on embedded C language concepts
-- 
+- Revision of git CI/CD workflow
+- Test Driven Development
