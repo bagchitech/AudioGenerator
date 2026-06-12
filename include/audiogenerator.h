@@ -6,6 +6,7 @@
 #include<stdint.h>
 #include<math.h>
 #include<stdio.h>
+#include<stdlib.h>
 
 
 /*Audio Parameters*/
@@ -14,12 +15,19 @@
 #define BIT_DEPTH 16
 
 extern double frequency;
+extern double amplitude;
+extern uint16_t duration;
 
+//I want a pointer to the buffer that will be created
 
 
 /*Obtain user input frequency*/
-void getFrequency();
+void getAudioParameters();
 
-void verifyFrequency();
+void verifyAudioParameters();
+
+/*Sine Wave Calculation*/
+//Formula y(t) = A*sin(2*pi*f*t)
+void generateSineWave(const double frequency, const double amplitude, const uint16_t duration);
 
 #endif // AUDIOGENERATOR_H
