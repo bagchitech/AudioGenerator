@@ -16,7 +16,7 @@
 
 extern double frequency;
 extern double amplitude;
-extern uint16_t duration;
+extern int duration;
 
 //I want a pointer to the buffer that will be created
 

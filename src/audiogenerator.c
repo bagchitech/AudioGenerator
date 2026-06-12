@@ -1,7 +1,7 @@
 #include "audiogenerator.h"
 
 double frequency;
-uint16_t duration;
+int duration;
 double amplitude;
 double *buffer;
 
@@ -22,6 +22,9 @@ void verifyAudioParameters(){
         printf("Error: Invalid frequency %lf\n", frequency);
     } else {
         printf("The frequency input by the user is %lf\n", frequency);
+    }
+    if(duration<0){
+        printf("Error:Invalid duration %d\n", duration);
     }
 }
 
