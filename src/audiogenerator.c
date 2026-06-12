@@ -39,6 +39,6 @@ void generateSineWave(const double frequency, const double amplitude, const uint
         double time = (double)n/numSamples;
         buffer[n] = amplitude * sin(2*PI*frequency*time);
     }
-    printf("Sine wave stored in buffer\n");
+    printf("Info:Sine wave stored in buffer\n");
      
 }
