@@ -38,7 +38,7 @@ void generateSineWave(const double frequency, const double amplitude, const uint
     buffer = malloc(numSamples*sizeof(double));
     for(int n=0; n<numSamples;n++)
     {
-        double time = (double)n/numSamples;
+        double time = (double)n / SAMPLE_RATE;
         buffer[n] = amplitude * sin(2*PI*frequency*time);
     }
     printf("Info:Sine wave stored in buffer\n");
@@ -54,10 +54,10 @@ int16_t quantizeBits(double sample){
     if(scaled > 32767.0){
         scaled = 32767.0;
     }
-    return (int16_t)scaled;
+    return (int16_t)round(scaled);
 }
 
-void encodePCM(int16_t *audio){
+void encodePCM(){
     uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
     /*Create the buffer based on numSamples*/
     audio = malloc(numSamples*sizeof(int16_t));
@@ -66,5 +66,20 @@ void encodePCM(int16_t *audio){
         audio[n] = quantizeBits(buffer[n]);       
     }
     free(buffer);
+}
+
+void writeAudiotoFile(){
+    FILE *file_ptr = fopen("output.raw", "wb");
+    uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
+    fwrite(audio, sizeof(int16_t), numSamples, file_ptr);
+    fclose(file_ptr);
+    free(audio);
+}
+
+void generateAudio(){
+    getAudioParameters();
+    verifyAudioParameters();
+    encodePCM();
+    writeAudiotoFile();
 }
 

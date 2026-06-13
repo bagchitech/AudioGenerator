@@ -36,6 +36,11 @@ void generateSineWave(const double frequency, const double amplitude, const uint
 int16_t quantizeBits(double sample);
 
 /*Encode signal - PCM*/
-void encodePCM(int16_t *audio);
+void encodePCM(void);
 
+/*Store audio in file*/
+void writeAudiotoFile(void);
+
+/*Function to act as mother function*/
+void generateAudio(void);
 #endif // AUDIOGENERATOR_H
