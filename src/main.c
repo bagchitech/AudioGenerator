@@ -1,7 +1,6 @@
 #include "audiogenerator.h"
 
 int main(){
-    getAudioParameters();
-    verifyAudioParameters();
+    generateAudio();
     return 0;
 }
