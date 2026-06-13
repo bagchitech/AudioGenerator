@@ -4,6 +4,8 @@ double frequency;
 int duration;
 double amplitude;
 double *buffer;
+int16_t *audio;
+
 
 /*Obtain user input frequency*/
 void getAudioParameters(){
@@ -42,3 +44,27 @@ void generateSineWave(const double frequency, const double amplitude, const uint
     printf("Info:Sine wave stored in buffer\n");
      
 }
+
+/*Quantization Stage - Bit depth 16 - To be called by encodePCM*/
+int16_t quantizeBits(double sample){
+    double scaled = sample * 32767.0;
+    if (scaled < -32768.0){
+        scaled = -32768.0;
+    }
+    if(scaled > 32767.0){
+        scaled = 32767.0;
+    }
+    return (int16_t)scaled;
+}
+
+void encodePCM(int16_t *audio){
+    uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
+    /*Create the buffer based on numSamples*/
+    audio = malloc(numSamples*sizeof(int16_t));
+    for(int n=0; n<numSamples;n++)
+    {
+        audio[n] = quantizeBits(buffer[n]);       
+    }
+    free(buffer);
+}
+
