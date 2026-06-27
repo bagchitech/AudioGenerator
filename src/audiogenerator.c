@@ -1,29 +1,33 @@
 #include "audiogenerator.h"
 
-double frequency;
+double lfrequency;
+double rfrequency;
 int duration;
 double amplitude;
-double *buffer;
+double *lbuffer;
+double *rbuffer;
 int16_t *audio;
 
 
 /*Obtain user input frequency*/
 void getAudioParameters(){
-    printf("Enter frequency of the audio signal in Hertz:\n");
-    scanf("%lf", &frequency);
+    printf("Enter frequency of the audio signal for left ear in Hertz:\n");
+    scanf("%lf", &lfrequency);
+    printf("Enter frequency of the audio signal for right ear in Hertz:\n");
+    scanf("%lf", &rfrequency);
     printf("Enter the duration in seconds:\n");
     scanf("%d",&duration);
     printf("Enter the volume:\n");
     scanf("%lf",&amplitude);
 
-    generateSineWave(frequency, amplitude, duration);
+    generateSineWave(lfrequency, rfrequency, amplitude, duration);
 }
 
 void verifyAudioParameters(){
-    if (frequency <= 0 || frequency > 20000){
-        printf("Error: Invalid frequency %lf\n", frequency);
+    if (lfrequency <= 0 || lfrequency > 20000){
+        printf("Error: Invalid frequency %lf\n", lfrequency);
     } else {
-        printf("The frequency input by the user is %lf\n", frequency);
+        printf("The frequency input by the user is %lf\n", lfrequency);
     }
     if(duration<0){
         printf("Error:Invalid duration %d\n", duration);
@@ -31,15 +35,17 @@ void verifyAudioParameters(){
 }
 
 /*Sine Wave Generation*/
-void generateSineWave(const double frequency, const double amplitude, const uint16_t duration){
+void generateSineWave(const double lfrequency, const double rfrequency, const double amplitude, const uint16_t duration){
     /*Figure out the number of samples*/
     uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
     /*Create the buffer based on numSamples*/
-    buffer = malloc(numSamples*sizeof(double));
+    lbuffer = malloc(numSamples*sizeof(double));
+    rbuffer = malloc(numSamples*sizeof(double));
     for(int n=0; n<numSamples;n++)
     {
         double time = (double)n / SAMPLE_RATE;
-        buffer[n] = amplitude * sin(2*PI*frequency*time);
+        lbuffer[n] = amplitude * sin(2*PI*lfrequency*time);
+        rbuffer[n] = amplitude * sin(2*PI*rfrequency*time);
     }
     printf("Info:Sine wave stored in buffer\n");
      
@@ -60,18 +66,20 @@ int16_t quantizeBits(double sample){
 void encodePCM(){
     uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
     /*Create the buffer based on numSamples*/
-    audio = malloc(numSamples*sizeof(int16_t));
+    audio = malloc(2*numSamples*sizeof(int16_t));
     for(int n=0; n<numSamples;n++)
     {
-        audio[n] = quantizeBits(buffer[n]);       
+        audio[(2*n)] = quantizeBits(lbuffer[n]);    
+        audio[(2*n +1)] = quantizeBits(rbuffer[n]);   
     }
-    free(buffer);
+    free(lbuffer);
+    free(rbuffer);
 }
 
 void writeAudiotoFile(){
     FILE *file_ptr = fopen("output.raw", "wb");
     uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
-    fwrite(audio, sizeof(int16_t), numSamples, file_ptr);
+    fwrite(audio, sizeof(int16_t), (2*numSamples), file_ptr);
     fclose(file_ptr);
     free(audio);
 }

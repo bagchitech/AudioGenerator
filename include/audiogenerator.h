@@ -14,10 +14,12 @@
 #define PI 3.14
 #define BIT_DEPTH 16
 
-extern double frequency;
+extern double lfrequency;
+extern double rfrequency;
 extern double amplitude;
 extern int duration;
-extern double *buffer;
+extern double *lbuffer;
+extern double *rbuffer;
 extern int16_t *audio;
 
 //I want a pointer to the buffer that will be created
@@ -30,7 +32,7 @@ void verifyAudioParameters();
 
 /*Sine Wave Calculation - Sample Stage - Followed Nyquist Rule*/
 //Formula y(t) = A*sin(2*pi*f*t)
-void generateSineWave(const double frequency, const double amplitude, const uint16_t duration);
+void generateSineWave(const double lfrequency, const double rfrequncy, const double amplitude, const uint16_t duration);
 
 /*Quantization Stage - Bit depth 16 - To be called by encodePCM*/
 int16_t quantizeBits(double sample);
