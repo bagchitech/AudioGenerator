@@ -24,6 +24,23 @@ extern int16_t *audio;
 
 //I want a pointer to the buffer that will be created
 
+#pragma pack(push, 1)
+typedef struct {
+    char     riff[4];           // "RIFF"
+    uint32_t fileSize;          // total file size − 8
+    char     wave[4];           // "WAVE"
+    char     fmt[4];            // "fmt "
+    uint32_t fmtChunkSize;      // 16 for PCM
+    uint16_t audioFormat;       // 1 for PCM
+    uint16_t numChannels;       // 1 mono, 2 stereo
+    uint32_t sampleRate;        // 44100
+    uint32_t byteRate;          // sampleRate * numChannels * bitsPerSample/8
+    uint16_t blockAlign;        // numChannels * bitsPerSample/8
+    uint16_t bitsPerSample;     // 16
+    char     data[4];           // "data"
+    uint32_t dataSize;          // numSamples * numChannels * bitsPerSample/8
+} WavHeader;
+#pragma pack(pop)
 
 /*Obtain user input frequency*/
 void getAudioParameters();
@@ -45,4 +62,8 @@ void writeAudiotoFile(void);
 
 /*Function to act as mother function*/
 void generateAudio(void);
+
+/*Function to generate WAV format audio file*/
+void writeWAVFile(void);
+
 #endif // AUDIOGENERATOR_H
