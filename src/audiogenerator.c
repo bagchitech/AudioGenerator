@@ -7,6 +7,8 @@ double amplitude;
 double *lbuffer;
 double *rbuffer;
 int16_t *audio;
+double lfreq[2];
+double rfreq[2];
 
 
 /*Obtain user input frequency*/
@@ -124,6 +126,58 @@ void writeAudiotoFile(void) {
 void generateAudio(){
     getAudioParameters();
     verifyAudioParameters();
+    encodePCM();
+    writeAudiotoFile();
+}
+
+void getChordParameters(){
+    int lnum;
+    printf("How many frequencies for the left? (Not more than 2)\n");
+    scanf("%d",&lnum);
+    for(int i=0;i<lnum;i++){
+        printf("Enter the frequency (%d):\n",(i+1));
+        scanf("%lf",&lfreq[i]);
+    }
+    printf("How many frequencies for the right? (Not more than 2)\n");
+    scanf("%d",&lnum);
+        for(int i=0;i<lnum;i++){
+        printf("Enter the frequency (%d):\n",(i+1));
+        scanf("%lf",&rfreq[i]);
+    }
+    printf("Enter the duration in seconds:\n");
+    scanf("%d",&duration);
+    printf("Enter the volume:\n");
+    scanf("%lf",&amplitude);
+    generateChordSineWave(lfreq, rfreq, amplitude, duration);
+}
+
+void generateChordSineWave(const double* lfreq, const double* rfreq, const double amplitude, const uint16_t duration){
+    /*Figure out the number of samples*/
+    uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
+    /*Create the buffer based on numSamples*/
+    lbuffer = malloc(numSamples*sizeof(double));
+    rbuffer = malloc(numSamples*sizeof(double));
+    double temp_lbuffer = 0;
+    double temp_rbuffer = 0;
+
+    for(int n=0; n<numSamples;n++)
+    {
+        double time = (double)n / SAMPLE_RATE;
+        for(int v=0; v<2;v++){
+            temp_lbuffer += amplitude * sin(2*PI*lfreq[v]*time);
+        }
+        lbuffer[n] = temp_lbuffer / 2.0;
+        temp_lbuffer = 0;
+        for(int v=0; v<1;v++){
+            temp_rbuffer += amplitude * sin(2*PI*rfreq[v]*time);
+        }
+        rbuffer[n] = temp_rbuffer / 1.0;
+    }
+    printf("Info: Chord Sine wave stored in buffers\n");
+}
+
+void generateChord(){
+    getChordParameters();
     encodePCM();
     writeAudiotoFile();
 }
