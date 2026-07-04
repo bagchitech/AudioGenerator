@@ -21,6 +21,8 @@ extern int duration;
 extern double *lbuffer;
 extern double *rbuffer;
 extern int16_t *audio;
+extern double lfreq[2];
+extern double rfreq[2];
 
 //I want a pointer to the buffer that will be created
 
@@ -63,7 +65,15 @@ void writeAudiotoFile(void);
 /*Function to act as mother function*/
 void generateAudio(void);
 
+/*Function for chord generation*/
+void generateChord(void);
+
 /*Function to generate WAV format audio file*/
 void writeWAVFile(void);
 
+/*Get Chord parameters*/
+void getChordParameters(void);
+
+/*generate sine wave for the chord*/
+void generateChordSineWave(const double* lfreq, const double* rfreq, const double amplitude, const uint16_t duration);
 #endif // AUDIOGENERATOR_H

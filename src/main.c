@@ -1,6 +1,13 @@
 #include "audiogenerator.h"
 
 int main(){
-    generateAudio();
+    int val;
+    printf("Do you want to generate a chord(0) or a monotone(1)?\n");
+    scanf("%d",&val);
+    if(val==0){
+        generateChord();
+    }else if(val==1){
+        generateAudio();
+    }
     return 0;
 }
