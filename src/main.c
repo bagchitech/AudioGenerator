@@ -9,5 +9,8 @@ int main(){
     }else if(val==1){
         generateAudio();
     }
+
+    AudioInfo info = {0};
+    generateSound(&info);
     return 0;
 }

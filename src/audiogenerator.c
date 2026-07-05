@@ -43,7 +43,7 @@ void generateSineWave(const double lfrequency, const double rfrequency, const do
     /*Create the buffer based on numSamples*/
     lbuffer = malloc(numSamples*sizeof(double));
     rbuffer = malloc(numSamples*sizeof(double));
-    for(int n=0; n<numSamples;n++)
+    for(uint32_t n=0; n<numSamples;n++)
     {
         double time = (double)n / SAMPLE_RATE;
         lbuffer[n] = amplitude * sin(2*PI*lfrequency*time);
@@ -69,7 +69,7 @@ void encodePCM(){
     uint32_t numSamples  = (uint32_t)(SAMPLE_RATE*duration);
     /*Create the buffer based on numSamples*/
     audio = malloc(2*numSamples*sizeof(int16_t));
-    for(int n=0; n<numSamples;n++)
+    for(uint32_t n=0; n<numSamples;n++)
     {
         audio[(2*n)] = quantizeBits(lbuffer[n]);    
         audio[(2*n +1)] = quantizeBits(rbuffer[n]);   
@@ -160,7 +160,7 @@ void generateChordSineWave(const double* lfreq, const double* rfreq, const doubl
     double temp_lbuffer = 0;
     double temp_rbuffer = 0;
 
-    for(int n=0; n<numSamples;n++)
+    for(uint32_t n=0; n<numSamples;n++)
     {
         double time = (double)n / SAMPLE_RATE;
         for(int v=0; v<2;v++){
@@ -180,4 +180,114 @@ void generateChord(){
     getChordParameters();
     encodePCM();
     writeAudiotoFile();
+}
+
+/*Get parameters for the audio*/
+void getAudioInfoParameters(AudioInfo *info){
+    printf("How many frequencies for the left? (Not more than 8)\n");
+    scanf("%d",&info->lnum);
+    if(info->lnum > 8){
+        printf("Invalid Count!\n");
+        return;
+    }
+    for(int i=0;i<info->lnum;i++){
+        printf("Enter the frequency (%d):\n",(i+1));
+        scanf("%lf",&info->lfreq[i]);
+    }
+    printf("How many frequencies for the right? (Not more than 8)\n");
+    scanf("%d",&info->rnum);
+     if(info->rnum > 8){
+        printf("Invalid Count!\n");
+        return;
+    }
+    for(int i=0;i < info->rnum;i++){
+        printf("Enter the frequency (%d):\n",(i+1));
+        scanf("%lf",&info->rfreq[i]);
+    }
+    printf("Enter the duration in seconds:\n");
+    scanf("%d",&info->duration);
+    printf("Enter the volume:\n");
+    scanf("%lf",&info->amplitude);
+    generateAudioInfoSineWave(info);
+}
+
+/*generate audio sine wave*/
+void generateAudioInfoSineWave(AudioInfo *info){
+     /*Figure out the number of samples*/
+    info->numSamples  = (uint32_t)(SAMPLE_RATE*info->duration);
+    /*Create the buffer based on numSamples*/
+    info->lbuffer = malloc(info->numSamples*sizeof(double));
+    info->rbuffer = malloc(info->numSamples*sizeof(double));
+    double temp_lbuffer = 0;
+    double temp_rbuffer = 0;
+
+    for(uint32_t n=0; n<info->numSamples;n++)
+    {
+        double time = (double)n / SAMPLE_RATE;
+        for(int v=0; v<2;v++){
+            temp_lbuffer += info->amplitude * sin(2*PI*info->lfreq[v]*time);
+        }
+        info->lbuffer[n] = temp_lbuffer / (double)info->lnum;
+        temp_lbuffer = 0;
+        for(int v=0; v<1;v++){
+            temp_rbuffer += info->amplitude * sin(2*PI*info->rfreq[v]*time);
+        }
+        info->rbuffer[n] = temp_rbuffer / (double)info->rnum;
+    }
+    printf("Info: Audio Sine wave stored in buffers\n");
+}
+
+/*encode Audio Info PCB*/
+void encodeAudioInfoPCM(AudioInfo *info){
+    /*Create the buffer based on numSamples*/
+    info->audio = malloc(2*info->numSamples*sizeof(int16_t));
+    for(uint32_t n=0; n<info->numSamples;n++)
+    {
+        info->audio[(2*n)] = quantizeBits(info->lbuffer[n]);    
+        info->audio[(2*n +1)] = quantizeBits(info->rbuffer[n]);   
+    }
+    free(info->lbuffer);
+    free(info->rbuffer);
+}
+
+/*write to the WAV file*/
+void writeAudioInfoTofile(AudioInfo *info){
+    info->numChannels = 2;
+    info->bitsPerSample = 16;
+    uint32_t dataSize = info->numSamples * info->numChannels * (info->bitsPerSample / 8);
+
+    WavHeader header = {
+        .riff          = {'R','I','F','F'},
+        .fileSize      = 36 + dataSize,
+        .wave          = {'W','A','V','E'},
+        .fmt           = {'f','m','t',' '},
+        .fmtChunkSize  = 16,
+        .audioFormat   = 1,           // PCM
+        .numChannels   = info->numChannels,
+        .sampleRate    = SAMPLE_RATE,
+        .byteRate      = SAMPLE_RATE * info->numChannels * (info->bitsPerSample / 8),
+        .blockAlign    = info->numChannels * (info->bitsPerSample / 8),
+        .bitsPerSample = info->bitsPerSample,
+        .data          = {'d','a','t','a'},
+        .dataSize      = dataSize,
+    };
+
+    FILE *file_ptr = fopen("audioOutput.wav", "wb");
+    if (!file_ptr) {
+        printf("Error: cannot open output.wav\n");
+        return;
+    }
+
+    fwrite(&header, sizeof(WavHeader), 1, file_ptr);
+    fwrite(info->audio, sizeof(int16_t), 2 * info->numSamples, file_ptr);
+
+    fclose(file_ptr);
+    free(info->audio);
+}
+
+/*Wrapper function to be called*/
+void generateSound(AudioInfo *info){
+    getAudioInfoParameters(info);
+    encodeAudioInfoPCM(info);
+    writeAudioInfoTofile(info);
 }
