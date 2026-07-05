@@ -1,0 +1,3 @@
+C:/Users/bagch/Documents/GitHub/AudioGenerator/build/CMakeFiles/audiogen.dir
+C:/Users/bagch/Documents/GitHub/AudioGenerator/build/CMakeFiles/edit_cache.dir
+C:/Users/bagch/Documents/GitHub/AudioGenerator/build/CMakeFiles/rebuild_cache.dir

@@ -26,6 +26,25 @@ extern double rfreq[2];
 
 //I want a pointer to the buffer that will be created
 
+/*Struct to encompass the audio information*/
+typedef struct { //kept in mind the memory optimization
+    double amplitude;
+    double *lbuffer;
+    double *rbuffer;
+    double lfreq[8];
+    double rfreq[8];
+
+    int16_t *audio;
+    uint16_t numChannels;
+    uint16_t bitsPerSample;
+
+    int duration;
+    int lnum;
+    int rnum;
+    uint32_t numSamples;
+    
+} AudioInfo;
+
 #pragma pack(push, 1)
 typedef struct {
     char     riff[4];           // "RIFF"
@@ -76,4 +95,20 @@ void getChordParameters(void);
 
 /*generate sine wave for the chord*/
 void generateChordSineWave(const double* lfreq, const double* rfreq, const double amplitude, const uint16_t duration);
+
+/*Get parameters for the audio*/
+void getAudioInfoParameters(AudioInfo *info);
+
+/*generate audio sine wave*/
+void generateAudioInfoSineWave(AudioInfo *info);
+
+/*encode Audio Info PCB*/
+void encodeAudioInfoPCM(AudioInfo *info);
+
+/*write to the WAV file*/
+void writeAudioInfoTofile(AudioInfo *info);
+
+/*Wrapper function to be called*/
+void generateSound(AudioInfo *info);
+
 #endif // AUDIOGENERATOR_H

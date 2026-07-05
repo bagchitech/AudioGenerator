@@ -1,0 +1,4 @@
+# ninja log v7
+4	105	8049475921667039	CMakeFiles/audiogen.dir/src/main.c.obj	8036e2c1db9069c4
+11	135	8049475921742894	CMakeFiles/audiogen.dir/src/audiogenerator.c.obj	adaebc26d4566abd
+136	265	8049475922984615	audiogen.exe	2decce972d37ce26
