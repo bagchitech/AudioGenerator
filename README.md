@@ -8,3 +8,6 @@ The application generates an audio signal - a sine wave - and it is stored as ra
 - Revision on embedded C language concepts
 - Revision of git CI/CD workflow
 - Test Driven Development
+
+## NOTE - 
+The old code has been kept along with the optimized code for learning revision. 
