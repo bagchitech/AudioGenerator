@@ -24,8 +24,6 @@ extern int16_t *audio;
 extern double lfreq[2];
 extern double rfreq[2];
 
-//I want a pointer to the buffer that will be created
-
 /*Struct to encompass the audio information*/
 typedef struct { //kept in mind the memory optimization
     double amplitude;
